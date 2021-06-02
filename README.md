@@ -4,6 +4,35 @@
 [![codecov](https://codecov.io/gh/hydro-project/cloudburst/branch/master/graph/badge.svg)](https://codecov.io/gh/hydro-project/cloudburst)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+## Run local in docker
+Okay team. Clone this repo and then in the root of it:
+
+```bash
+docker build -t cloudburst_local_image .
+docker run -it --name cloudburst_local_container cloudburst_local_image /bin/bash
+```
+
+You're now connected to the terminal of the docker container. In here we'll start anna and cloudburst.
+
+```bash
+./dockerfiles/start-cloudburst.sh
+```
+
+The first time is a lot slower than subsequent times, because anna has to be compiled. If everything went well you should now see 7 processes if you run `ps`. Two python, and three anna processes. 
+
+That's it cloudburst is now running in this docker. Good luck getting the rest in here!
+
+Starting the container and attaching to the terminal again if you stopped the container is done with `start`:
+
+```bash
+docker start -ai cloudburst_local_container
+```
+
+Don't forget to run `start-cloudburst.sh` again.
+
+PS: You can test that it really works by running `python3 test.py`. This should give similar output as below.
+
+## OG readme
 Cloudburst is a low-latency, stateful serverless programming framework built on top of the [Anna KVS](https://github.com/hydro-project/anna). Cloudburst enables users to execute compositions of functions at low latency, and the system builds on top of Anna in order to enable stateful computation. Cloudburst is co-deployed with the [Anna caching system](https://github.com/hydro-project/anna-cache) to achieve low-latency access to shared state, and the system relies on Anna's lattice data structures to resolve conflicting updates to shared state.
 
 ## Getting Started
