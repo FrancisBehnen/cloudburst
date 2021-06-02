@@ -57,7 +57,7 @@ while !(git fetch -p origin); do
    echo "git fetch failed, retrying..."
 done
 
-git checkout -b brnch origin/$ANNA_REPO_BRANCH
+git checkout origin/$ANNA_REPO_BRANCH
 git submodule sync
 git submodule update
 
@@ -72,7 +72,7 @@ while !(git fetch -p origin); do
    echo "git fetch failed, retrying..."
 done
 
-git checkout -b brnch origin/$REPO_BRANCH
+git checkout origin/$REPO_BRANCH
 git submodule sync
 git submodule update
 
