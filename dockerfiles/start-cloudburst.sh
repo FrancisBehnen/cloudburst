@@ -116,6 +116,18 @@ elif [[ "$ROLE" = "benchmark" ]]; then
   python3.6 cloudburst/server/benchmarks/server.py
 elif [[ "$ROLE" = "local" ]]; then
 	echo "Hello local runner"
+
+	cd $HYDRO_HOME/anna
+	chmod +x scripts/start-anna-local.sh
+	if [[ -f "build/target/kvs/anna-route" ]]; then
+		./scripts/start-anna-local.sh n n
+	else
+		./scripts/start-anna-local.sh y n
+	fi
+
+	cd ../cloudburst
+		
+	
 	python3 cloudburst/server/scheduler/server.py conf/cloudburst-local.yml &
 	SPID=$!
 	python3 cloudburst/server/executor/server.py conf/cloudburst-local.yml &

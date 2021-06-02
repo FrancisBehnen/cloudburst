@@ -45,7 +45,11 @@ RUN pip3 install tensorflow==1.12.0 tensorboard==1.12.2 scikit-image
 RUN pip3 install pandas s3fs 
 
 RUN rm $(which protoc)
+RUN apt-get update && apt-get -y install sudo
+COPY common/scripts/install-dependencies.sh /common/scripts/install-dependencies.sh 
+RUN ./common/scripts/install-dependencies.sh
 
 COPY . .
 
-CMD bash start-cloudburst.sh
+RUN chmod +x /dockerfiles/start-cloudburst.sh
+CMD [ "./dockerfiles/start-cloudburst.sh" ]
