@@ -8,6 +8,8 @@
 Okay team. Clone this repo and then in the root of it:
 
 ```bash
+git checkout setup-local-in-docker
+git submodule update --init --recursive
 docker build -t cloudburst_local_image .
 docker run -it --name cloudburst_local_container cloudburst_local_image /bin/bash
 ```

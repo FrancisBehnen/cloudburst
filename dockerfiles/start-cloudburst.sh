@@ -78,6 +78,7 @@ git submodule update
 
 # Compile protobufs and run other installation procedures before starting.
 ./scripts/build.sh
+cd / && ./scripts/build.sh
 
 touch conf/cloudburst-config.yml
 echo "ip: $IP" >> conf/cloudburst-config.yml
