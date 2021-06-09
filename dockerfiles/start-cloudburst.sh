@@ -29,10 +29,27 @@ gen_yml_list() {
   echo -e "$RESULT"
 }
 
-
+## Set default vals
 # Download latest version of the code from relevant repository & branch -- if
 # none are specified, we use hydro-project/cloudburst by default. Install the KVS
 # client from the Anna project.
+if [[ -z "$REPO_ORG" ]]; then
+  REPO_ORG="hydro-project"
+fi
+if [[ -z "$REPO_BRANCH" ]]; then
+  REPO_BRANCH="master"
+fi
+if [[ -z "$ANNA_REPO_ORG" ]]; then
+  ANNA_REPO_ORG="hydro-project"
+fi
+if [[ -z "$ANNA_REPO_BRANCH" ]]; then
+  ANNA_REPO_BRANCH="master"
+fi
+# Set role to local if no role set
+if [[ -z "$ROLE" ]]; then
+	ROLE="local"
+fi
+
 cd $HYDRO_HOME/anna
 git remote remove origin
 git remote add origin https://github.com/$ANNA_REPO_ORG/anna
@@ -40,7 +57,7 @@ while !(git fetch -p origin); do
    echo "git fetch failed, retrying..."
 done
 
-git checkout -b brnch origin/$ANNA_REPO_BRANCH
+git checkout origin/$ANNA_REPO_BRANCH
 git submodule sync
 git submodule update
 
@@ -48,13 +65,6 @@ cd client/python
 python3.6 setup.py install
 
 cd $HYDRO_HOME/cloudburst
-if [[ -z "$REPO_ORG" ]]; then
-  REPO_ORG="hydro-project"
-fi
-
-if [[ -z "$REPO_BRANCH" ]]; then
-  REPO_BRANCH="master"
-fi
 
 git remote remove origin
 git remote add origin https://github.com/$REPO_ORG/cloudburst
@@ -62,12 +72,13 @@ while !(git fetch -p origin); do
    echo "git fetch failed, retrying..."
 done
 
-git checkout -b brnch origin/$REPO_BRANCH
+git checkout origin/$REPO_BRANCH
 git submodule sync
 git submodule update
 
 # Compile protobufs and run other installation procedures before starting.
 ./scripts/build.sh
+cd / && ./scripts/build.sh
 
 touch conf/cloudburst-config.yml
 echo "ip: $IP" >> conf/cloudburst-config.yml
@@ -104,5 +115,27 @@ elif [[ "$ROLE" = "benchmark" ]]; then
   echo "    thread_id: $THREAD_ID" >> conf/cloudburst-config.yml
 
   python3.6 cloudburst/server/benchmarks/server.py
+elif [[ "$ROLE" = "local" ]]; then
+	echo "Hello local runner"
+
+	cd $HYDRO_HOME/anna
+	chmod +x scripts/start-anna-local.sh
+	if [[ -f "build/target/kvs/anna-route" ]]; then
+		./scripts/start-anna-local.sh n n
+	else
+		./scripts/start-anna-local.sh y n
+	fi
+
+	cd ../cloudburst
+		
+	
+	python3 cloudburst/server/scheduler/server.py conf/cloudburst-local.yml &
+	SPID=$!
+	python3 cloudburst/server/executor/server.py conf/cloudburst-local.yml &
+	EPID=$!
+	
+	echo $SPID > pids
+	echo $EPID >> pids
+	echo $SPID
 fi
 
