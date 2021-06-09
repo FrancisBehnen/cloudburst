@@ -45,5 +45,15 @@ RUN ./common/scripts/install-dependencies.sh
 
 COPY . .
 
+#EXPOSE 9000-9100
+EXPOSE 7050
+EXPOSE 7100
+EXPOSE 6000-6761
+EXPOSE 6450-6454
+EXPOSE 6460-6560
+EXPOSE 6760-6860
+EXPOSE 5000-5011
+EXPOSE 4000-4050
+
 RUN chmod +x dockerfiles/start-cloudburst.sh
 CMD [ "./dockerfiles/start-cloudburst.sh" ]
